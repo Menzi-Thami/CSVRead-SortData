@@ -31,4 +31,10 @@ This solution uses C# and .NET framework. Ensure you have a compatible .NET envi
 Notes
 Invalid data in the CSV file will be displayed with an error message.
 If no valid products are found in the CSV file, an error message will be displayed.
-Feel free to customize the code to suit your specific requirements or integrate it into your projects.
+
+![Proof of concept2](https://github.com/Menzi-Thami/CSVRead-SortData/assets/43884343/8f642694-12d5-4648-9562-b0c301b4da90)
+![Proof of concept](https://github.com/Menzi-Thami/CSVRead-SortData/assets/43884343/6ce574fd-87a9-4c51-877a-766c0d86cd8c)
+![Proof of concept5](https://github.com/Menzi-Thami/CSVRead-SortData/assets/43884343/cb0c3f06-61b7-43eb-96dd-540289ebfb0f)
+![Proof of concept4](https://github.com/Menzi-Thami/CSVRead-SortData/assets/43884343/02244d0c-a3a2-44bc-9949-9068a1b409a3)
+![Proof of concept3](https://github.com/Menzi-Thami/CSVRead-SortData/assets/43884343/2783e986-ea7d-4f5b-9c63-c87429d135aa)
+
