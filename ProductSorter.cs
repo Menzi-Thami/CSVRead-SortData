@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,11 +11,13 @@ class ProductSorter
 {
     private List<Product> _products;
 
+    // Constructor to initialize the ProductSorter with a list of products
     public ProductSorter(List<Product> products)
     {
         _products = products;
     }
 
+    //Sorting methods based on different criteria using LINQ OrderBy method
     public List<Product> SortByPriceAscending()
     {
         return _products.OrderBy(p => p.Price).ToList();

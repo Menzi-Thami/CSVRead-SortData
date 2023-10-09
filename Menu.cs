@@ -10,15 +10,18 @@ namespace CSVRead_SortData
     {
         private ProductSorter _productSorter;
 
+        // Constructor to initialize the Menu with a ProductSorter instance
         public Menu(ProductSorter productSorter)
         {
             _productSorter = productSorter;
         }
 
+        // Display menu options and handle user input
         public void ShowMenu()
         {
             while (true)
             {
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("Menu:");
                 Console.WriteLine("1. Sort by Price (ascending)");
                 Console.WriteLine("2. Sort by Quantity (ascending)");
@@ -47,20 +50,26 @@ namespace CSVRead_SortData
                             Environment.Exit(0);
                             break;
                         default:
+                            Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("Invalid choice. Please try again.");
                             break;
                     }
                 }
                 else
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Invalid input. Please enter a number.");
+                    Console.ResetColor();
                 }
             }
         }
 
+        // Display sorted products in a tabular format
         private void DisplayProducts(List<Product> products)
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Sorted Products:");
+            Console.ResetColor();
             Console.WriteLine("Product Name\tPrice (ZAR)\tQuantity");
 
             foreach (var product in products)
@@ -69,9 +78,12 @@ namespace CSVRead_SortData
             }
         }
 
+        // Display grouped and sorted products in a tabular format
         private void DisplayGroupedProducts(Dictionary<string, List<Product>> groupedProducts)
         {
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Grouped and Sorted Products:");
+            Console.ResetColor();
             Console.WriteLine("Product Name\tPrice (ZAR)\tQuantity");
 
             foreach (var group in groupedProducts)
