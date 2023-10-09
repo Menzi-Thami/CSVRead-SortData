@@ -9,6 +9,8 @@ class CsvReader
 
         try
         {
+            // Read products from CSV file, validate data, and add to the products list
+            // Handle invalid data and file reading errors
             using (var reader = new StreamReader(filePath))
             {
                 // Skip the header row if present
@@ -40,9 +42,11 @@ class CsvReader
         }
         catch (Exception ex)
         {
+            // Throw custom exception
             throw new InvalidDataException($"Error reading CSV file: {ex.Message}");
         }
 
+        // Check if valid products were found, if not, throw an exception
         if (products.Count == 0)
         {
             throw new InvalidDataException("No valid products found in the CSV file.");
