@@ -83,7 +83,7 @@ namespace CSVRead_SortData
                     Console.WriteLine($"{product.ProductName}\t\t{product.Price}\t\t{product.Quantity}");
                 }
 
-                Console.WriteLine(); 
+                Console.WriteLine();
             }
         }
     }

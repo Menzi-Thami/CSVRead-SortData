@@ -1,27 +1,34 @@
-﻿using CSVRead_SortData;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 
-try
+namespace CSVRead_SortData
 {
-    Console.Write("Enter the file path of the CSV file: ");
-    string filePath = Console.ReadLine();
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            try
+            {
+                Console.Write("Enter the file path of the CSV file: ");
+                string filePath = Console.ReadLine();
 
-    if (File.Exists(filePath))
-    {
-        var products = CsvReader.ReadProducts(filePath);
-        var sorter = new ProductSorter(products);
-        var menu = new Menu(sorter);
-        menu.ShowMenu();
+                if (!File.Exists(filePath))
+                {
+                    throw new FileNotFoundException($"Error: The specified file was not found. File Path: {filePath}");
+                }
+
+                var products = CsvReader.ReadProducts(filePath);
+                var sorter = new ProductSorter(products);
+                var menu = new Menu(sorter);
+                menu.ShowMenu();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+            Console.ReadLine();
+        }
     }
-    else
-    {
-        Console.WriteLine("File not found. Please provide a valid file path.");
-    }
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"An error occurred: {ex.Message}");
 }
