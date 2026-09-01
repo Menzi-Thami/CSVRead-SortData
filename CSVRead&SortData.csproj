@@ -8,4 +8,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <!-- The test project lives under tests/; keep its sources out of this app's compile. -->
+  <ItemGroup>
+    <Compile Remove="tests/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="CsvSortData.Tests" />
+  </ItemGroup>
+
 </Project>

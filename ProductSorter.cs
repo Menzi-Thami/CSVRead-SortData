@@ -1,42 +1,26 @@
-﻿using System;
-using System.Buffers.Text;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace CSVRead_SortData;
-// Class responsible for sorting products
-class ProductSorter
+
+// Sorts and groups a supplied set of products. Pure logic (no I/O), so it is
+// directly unit-testable.
+internal sealed class ProductSorter : IProductSorter
 {
-    private List<Product> _products;
+    private readonly IReadOnlyList<Product> _products;
 
-    // Constructor to initialize the ProductSorter with a list of products
-    public ProductSorter(List<Product> products)
+    public ProductSorter(IReadOnlyList<Product> products)
     {
-        _products = products;
+        _products = products ?? throw new ArgumentNullException(nameof(products));
     }
 
-    //Sorting methods based on different criteria using LINQ OrderBy method
-    public List<Product> SortByPriceAscending()
-    {
-        return _products.OrderBy(p => p.Price).ToList();
-    }
+    public IReadOnlyList<Product> SortByPriceAscending() =>
+        _products.OrderBy(p => p.Price).ToList();
 
-    public List<Product> SortByQuantityAscending()
-    {
-        return _products.OrderBy(p => p.Quantity).ToList();
-    }
+    public IReadOnlyList<Product> SortByQuantityAscending() =>
+        _products.OrderBy(p => p.Quantity).ToList();
 
-    public List<Product> SortByNameAscending()
-    {
-        return _products.OrderBy(p => p.ProductName).ToList();
-    }
+    public IReadOnlyList<Product> SortByNameAscending() =>
+        _products.OrderBy(p => p.ProductName).ToList();
 
-    public Dictionary<string, List<Product>> GroupByNameAndSort()
-    {
-        var groupedProducts = _products.GroupBy(p => p.ProductName)
-                                       .ToDictionary(g => g.Key, g => g.OrderBy(p => p.Price).ToList());
-        return groupedProducts;
-    }
+    public IReadOnlyDictionary<string, List<Product>> GroupByNameAndSort() =>
+        _products.GroupBy(p => p.ProductName)
+                 .ToDictionary(g => g.Key, g => g.OrderBy(p => p.Price).ToList());
 }
