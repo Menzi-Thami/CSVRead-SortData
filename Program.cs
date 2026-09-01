@@ -1,43 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
+namespace CSVRead_SortData;
 
-namespace CSVRead_SortData
+// Composition root: wires the reader, sorter, printer and menu together and
+// handles top-level error reporting. All real work lives in the focused classes.
+internal static class Program
 {
-    class Program
+    private static void Main()
     {
-        static void Main(string[] args)
+        IProductPrinter printer = new ConsoleProductPrinter();
+
+        try
         {
-            try
+            Console.Write("Enter the file path of the CSV file: ");
+            var filePath = Console.ReadLine()?.Trim().Trim('"');
+
+            if (string.IsNullOrWhiteSpace(filePath))
             {
-                // Prompt user for CSV file path
-                Console.Write("Enter the file path of the CSV file: ");
-                string filePath = Console.ReadLine();
-
-                // Replace special characters in the file path
-                filePath = filePath.Replace("\"", "").Replace("\\", "\\\\");
-
-                // Check if the file exists, throw exception if not found
-                if (!File.Exists(filePath))
-                {
-                    throw new FileNotFoundException($"Error: The specified file was not found. File Path: {filePath}");
-                }
-
-                // Read products from CSV file and perform sorting/grouping operations
-                var products = CsvReader.ReadProducts(filePath);
-                var sorter = new ProductSorter(products);
-                var menu = new Menu(sorter);
-                menu.ShowMenu();
+                throw new InvalidDataException("Error: No file path was provided.");
             }
-            catch (Exception ex)
-            {
-                // Handle and display any exceptions
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"An error occurred: {ex.Message}");
-                Console.ResetColor();
-            }
-            Console.ReadLine();
+
+            IProductReader reader = new CsvProductReader();
+            var result = reader.ReadProducts(filePath);
+
+            printer.PrintInvalidLines(result.InvalidLines);
+
+            var sorter = new ProductSorter(result.Products);
+            var menu = new Menu(sorter, printer);
+            menu.ShowMenu();
+        }
+        catch (Exception ex) when (ex is FileNotFoundException or InvalidDataException)
+        {
+            printer.PrintError($"An error occurred: {ex.Message}");
         }
     }
 }
