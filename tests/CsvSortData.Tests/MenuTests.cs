@@ -49,7 +49,7 @@ public class MenuTests
         public List<string> Errors { get; } = [];
 
         public void PrintProducts(IReadOnlyList<Product> products) => PrintProductsCalls++;
-        public void PrintGroupedProducts(IReadOnlyDictionary<string, List<Product>> groupedProducts) { }
+        public void PrintGroupedProducts(IReadOnlyList<ProductGroup> groupedProducts) { }
         public void PrintInvalidLines(IReadOnlyList<string> invalidLines) { }
         public void PrintError(string message) => Errors.Add(message);
     }

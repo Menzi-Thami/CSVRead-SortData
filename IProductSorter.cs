@@ -7,5 +7,5 @@ internal interface IProductSorter
     IReadOnlyList<Product> SortByPriceAscending();
     IReadOnlyList<Product> SortByQuantityAscending();
     IReadOnlyList<Product> SortByNameAscending();
-    IReadOnlyDictionary<string, List<Product>> GroupByNameAndSort();
+    IReadOnlyList<ProductGroup> GroupByNameAndSort();
 }
