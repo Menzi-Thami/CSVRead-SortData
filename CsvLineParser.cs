@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 
 namespace CSVRead_SortData;
 
@@ -7,6 +8,7 @@ namespace CSVRead_SortData;
 internal static class CsvLineParser
 {
     // Expected line format: ProductName,Price,Quantity  (e.g. "Laptop,799.99,10").
+    // Fields may be quoted as Excel writes them: "Cable, USB-C",5.00,4 and "" for a literal quote.
     // Returns true and a Product when the line is valid; false otherwise.
     public static bool TryParse(string? line, out Product? product)
     {
@@ -17,9 +19,9 @@ internal static class CsvLineParser
             return false;
         }
 
-        var values = line.Split(',');
+        var values = SplitFields(line);
 
-        if (values.Length >= 3 &&
+        if (values is { Count: >= 3 } &&
             decimal.TryParse(values[1], NumberStyles.Currency, CultureInfo.InvariantCulture, out var price) &&
             int.TryParse(values[2], out var quantity))
         {
@@ -28,5 +30,56 @@ internal static class CsvLineParser
         }
 
         return false;
+    }
+
+    // Splits on commas outside double quotes. Returns null when a quote is never closed.
+    private static List<string>? SplitFields(string line)
+    {
+        var fields = new List<string>();
+        var current = new StringBuilder();
+        var inQuotes = false;
+
+        for (var i = 0; i < line.Length; i++)
+        {
+            var c = line[i];
+
+            if (inQuotes)
+            {
+                if (c != '"')
+                {
+                    current.Append(c);
+                }
+                else if (i + 1 < line.Length && line[i + 1] == '"')
+                {
+                    current.Append('"');
+                    i++;
+                }
+                else
+                {
+                    inQuotes = false;
+                }
+            }
+            else if (c == '"')
+            {
+                inQuotes = true;
+            }
+            else if (c == ',')
+            {
+                fields.Add(current.ToString());
+                current.Clear();
+            }
+            else
+            {
+                current.Append(c);
+            }
+        }
+
+        if (inQuotes)
+        {
+            return null;
+        }
+
+        fields.Add(current.ToString());
+        return fields;
     }
 }
