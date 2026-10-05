@@ -5,7 +5,7 @@ namespace CSVRead_SortData;
 internal interface IProductPrinter
 {
     void PrintProducts(IReadOnlyList<Product> products);
-    void PrintGroupedProducts(IReadOnlyDictionary<string, List<Product>> groupedProducts);
+    void PrintGroupedProducts(IReadOnlyList<ProductGroup> groupedProducts);
     void PrintInvalidLines(IReadOnlyList<string> invalidLines);
     void PrintError(string message);
 }

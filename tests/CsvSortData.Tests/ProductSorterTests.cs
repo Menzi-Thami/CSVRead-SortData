@@ -43,10 +43,29 @@ public class ProductSorterTests
     {
         var grouped = new ProductSorter(Sample()).GroupByNameAndSort();
 
-        grouped.Keys.ShouldContain("Apple");
-        grouped["Apple"].Count.ShouldBe(2);
-        grouped["Apple"].Select(p => p.Price).ShouldBe([1.10m, 1.50m]);
-        grouped["Cherry"].Single().Quantity.ShouldBe(2);
+        var apple = grouped.Single(g => g.Name == "Apple");
+        apple.Products.Count.ShouldBe(2);
+        apple.Products.Select(p => p.Price).ShouldBe([1.10m, 1.50m]);
+        grouped.Single(g => g.Name == "Cherry").Products.Single().Quantity.ShouldBe(2);
+    }
+
+    [Fact]
+    public void GroupByNameAndSort_MergesNamesThatDifferOnlyByCase()
+    {
+        var grouped = new ProductSorter([new Product("apple", 2.00m, 1), new Product("Apple", 1.00m, 1)]).GroupByNameAndSort();
+
+        grouped.Count.ShouldBe(1);
+        grouped[0].Name.ShouldBe("apple"); // first spelling seen
+        grouped[0].Products.Select(p => p.Price).ShouldBe([1.00m, 2.00m]);
+    }
+
+    [Fact]
+    public void GroupByNameAndSort_OrdersGroupsByName()
+    {
+        // Sample() lists Banana first; groups must not come out in file order.
+        var grouped = new ProductSorter(Sample()).GroupByNameAndSort();
+
+        grouped.Select(g => g.Name).ShouldBe(["Apple", "Banana", "Cherry"]);
     }
 
     [Fact]

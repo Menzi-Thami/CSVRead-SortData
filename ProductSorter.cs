@@ -20,7 +20,11 @@ internal sealed class ProductSorter : IProductSorter
     public IReadOnlyList<Product> SortByNameAscending() =>
         _products.OrderBy(p => p.ProductName).ToList();
 
-    public IReadOnlyDictionary<string, List<Product>> GroupByNameAndSort() =>
-        _products.GroupBy(p => p.ProductName)
-                 .ToDictionary(g => g.Key, g => g.OrderBy(p => p.Price).ToList());
+    // Grouping is a key match, so ordinal-ignore-case ("apple" and "Apple" are one product);
+    // the group order is a user-facing alphabetical list, so it uses the user's culture.
+    public IReadOnlyList<ProductGroup> GroupByNameAndSort() =>
+        _products.GroupBy(p => p.ProductName, StringComparer.OrdinalIgnoreCase)
+                 .OrderBy(g => g.Key, StringComparer.CurrentCulture)
+                 .Select(g => new ProductGroup(g.Key, g.OrderBy(p => p.Price).ToList()))
+                 .ToList();
 }

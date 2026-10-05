@@ -18,7 +18,7 @@ internal sealed class ConsoleProductPrinter : IProductPrinter
         }
     }
 
-    public void PrintGroupedProducts(IReadOnlyDictionary<string, List<Product>> groupedProducts)
+    public void PrintGroupedProducts(IReadOnlyList<ProductGroup> groupedProducts)
     {
         Console.ForegroundColor = ConsoleColor.Cyan;
         Console.WriteLine("Grouped and Sorted Products:");
@@ -27,9 +27,9 @@ internal sealed class ConsoleProductPrinter : IProductPrinter
 
         foreach (var group in groupedProducts)
         {
-            Console.WriteLine($"--- {group.Key} ---");
+            Console.WriteLine($"--- {group.Name} ---");
 
-            foreach (var product in group.Value)
+            foreach (var product in group.Products)
             {
                 PrintRow(product);
             }

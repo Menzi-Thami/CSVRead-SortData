@@ -19,8 +19,12 @@ internal sealed class CsvProductReader : IProductReader
         {
             using var reader = new StreamReader(filePath);
 
-            // Skip the header row if present.
-            reader.ReadLine();
+            // The first line is a header only if it does not parse as a product: a real header
+            // such as "ProductName,Price,Quantity" never does, because "Price" is not a number.
+            if (reader.ReadLine() is { } firstLine && CsvLineParser.TryParse(firstLine, out var firstProduct))
+            {
+                products.Add(firstProduct!);
+            }
 
             while (reader.ReadLine() is { } line)
             {

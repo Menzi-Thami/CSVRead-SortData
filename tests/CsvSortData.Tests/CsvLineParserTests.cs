@@ -1,3 +1,4 @@
+using System.Globalization;
 using CSVRead_SortData;
 using Shouldly;
 using Xunit;
@@ -36,12 +37,53 @@ public class CsvLineParserTests
     [InlineData("OnlyName,10")]          // too few columns
     [InlineData("Widget,not-a-price,5")] // non-numeric price
     [InlineData("Widget,9.99,not-int")]  // non-numeric quantity
+    [InlineData("\"Cable, USB-C,5.00,4")] // unmatched quote
+    [InlineData("Widget,9.99,-5")]       // negative quantity
+    [InlineData("Widget,(9.99),1")]      // accounting-style negative price
+    [InlineData("Widget,-9.99,1")]       // negative price
+    [InlineData("Widget,9.99,1.5")]      // fractional quantity
     public void TryParse_InvalidLine_ReturnsFalseAndNullProduct(string? line)
     {
         var ok = CsvLineParser.TryParse(line, out var product);
 
         ok.ShouldBeFalse();
         product.ShouldBeNull();
+    }
+
+    [Theory]
+    [InlineData("\"Cable, USB-C\",5.00,4", "Cable, USB-C", 5.00, 4)]    // comma inside quotes
+    [InlineData("\"Keyboard\",45,2", "Keyboard", 45, 2)]                 // quotes are not part of the name
+    [InlineData("\"12\"\" Ruler\",3.50,1", "12\" Ruler", 3.50, 1)]       // "" is an escaped quote
+    [InlineData("\"Widget\",\"9.99\",\"5\"", "Widget", 9.99, 5)]         // every field quoted
+    public void TryParse_QuotedFields_AreUnquoted(string line, string name, double price, int quantity)
+    {
+        var ok = CsvLineParser.TryParse(line, out var product);
+
+        ok.ShouldBeTrue();
+        product!.ProductName.ShouldBe(name);
+        product.Price.ShouldBe((decimal)price);
+        product.Quantity.ShouldBe(quantity);
+    }
+
+    [Theory]
+    [InlineData("en-GB")]
+    [InlineData("fa-IR")]
+    [InlineData("ar-SA")]
+    public void TryParse_GivesTheSameResultInEveryCulture(string cultureName)
+    {
+        var original = CultureInfo.CurrentCulture;
+        try
+        {
+            CultureInfo.CurrentCulture = new CultureInfo(cultureName);
+
+            CsvLineParser.TryParse("Widget,9.99,5", out var valid).ShouldBeTrue();
+            valid!.Quantity.ShouldBe(5);
+            CsvLineParser.TryParse("Widget,9.99,-5", out _).ShouldBeFalse();
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = original;
+        }
     }
 
     [Fact]
