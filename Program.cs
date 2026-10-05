@@ -24,7 +24,7 @@ internal static class Program
             printer.PrintInvalidLines(result.InvalidLines);
 
             var sorter = new ProductSorter(result.Products);
-            var menu = new Menu(sorter, printer);
+            var menu = new Menu(sorter, printer, Console.In);
             menu.ShowMenu();
         }
         catch (Exception ex) when (ex is FileNotFoundException or InvalidDataException)

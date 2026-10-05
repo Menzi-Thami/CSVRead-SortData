@@ -6,11 +6,13 @@ internal sealed class Menu
 {
     private readonly IProductSorter _sorter;
     private readonly IProductPrinter _printer;
+    private readonly TextReader _input;
 
-    public Menu(IProductSorter sorter, IProductPrinter printer)
+    public Menu(IProductSorter sorter, IProductPrinter printer, TextReader input)
     {
         _sorter = sorter ?? throw new ArgumentNullException(nameof(sorter));
         _printer = printer ?? throw new ArgumentNullException(nameof(printer));
+        _input = input ?? throw new ArgumentNullException(nameof(input));
     }
 
     public void ShowMenu()
@@ -19,7 +21,14 @@ internal sealed class Menu
         {
             PrintOptions();
 
-            if (!int.TryParse(Console.ReadLine(), out var choice))
+            // null = end of input (Ctrl+Z/Ctrl+D, closed pipe, redirected file): nothing more will come.
+            var input = _input.ReadLine();
+            if (input is null)
+            {
+                return;
+            }
+
+            if (!int.TryParse(input, out var choice))
             {
                 _printer.PrintError("Invalid input. Please enter a number.");
                 continue;
